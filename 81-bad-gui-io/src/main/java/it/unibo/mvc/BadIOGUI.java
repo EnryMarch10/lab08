@@ -10,12 +10,12 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -29,8 +29,8 @@ public class BadIOGUI {
 
     private static final String TITLE = "A very simple GUI application";
     private static final String PATH = System.getProperty("user.home")
-            + File.separator
-            + BadIOGUI.class.getSimpleName() + ".txt";
+        + File.separator
+        + BadIOGUI.class.getSimpleName() + ".txt";
     private static final int PROPORTION = 5;
     private final Random randomGenerator = new Random();
     private final JFrame frame = new JFrame(TITLE);
@@ -45,6 +45,15 @@ public class BadIOGUI {
         canvas.add(write, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // IMP start
+        final JPanel myPanel = new JPanel();
+        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
+        canvas.add(myPanel);
+        canvas.remove(write);
+        myPanel.add(write);
+        final JButton read = new JButton("Read on file");
+        myPanel.add(read);
+        // IMP end
         /*
          * Handlers
          */
@@ -61,8 +70,25 @@ public class BadIOGUI {
                 try (PrintStream ps = new PrintStream(PATH, StandardCharsets.UTF_8)) {
                     ps.print(randomGenerator.nextInt());
                 } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(frame, e1, "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, e1, "Error in writing", JOptionPane.ERROR_MESSAGE);
                     e1.printStackTrace(); // NOPMD: allowed as this is just an exercise
+                }
+            }
+        });
+        read.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                // Oppure FileInputStream...
+                try (BufferedReader r = new BufferedReader(new FileReader(PATH, StandardCharsets.UTF_8))) {
+                    String line = r.readLine();
+                    while (line != null) {
+                        System.out.println(line); // NOPMD: allowed as this is just an exercise
+                        line = r.readLine();
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(frame, e, "Error in reading", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace(); // NOPMD: allowed as this is just an exercise
                 }
             }
         });
@@ -90,6 +116,7 @@ public class BadIOGUI {
         /*
          * OK, ready to push the frame onscreen
          */
+        frame.pack();
         frame.setVisible(true);
     }
 

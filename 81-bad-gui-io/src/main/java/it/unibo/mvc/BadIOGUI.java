@@ -79,7 +79,7 @@ public class BadIOGUI {
 
             @Override
             public void actionPerformed(final ActionEvent arg0) {
-                // Oppure FileInputStream...
+                // Oppure FileInputStream... NO in realtà
                 try (BufferedReader r = new BufferedReader(new FileReader(PATH, StandardCharsets.UTF_8))) {
                     String line = r.readLine();
                     while (line != null) {

@@ -1,3 +1,5 @@
-minimum: 10
+minimum : 10
+
+ attempts : 5 
+
 maximum: 60
-attempts: 5

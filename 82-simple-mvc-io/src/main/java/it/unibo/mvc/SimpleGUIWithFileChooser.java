@@ -63,7 +63,7 @@ public final class SimpleGUIWithFileChooser {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     controller.setFile(fileChooser.getSelectedFile());
                     tField.setText(controller.getFilePath());
-                } else if (result == JFileChooser.CANCEL_OPTION) {
+                } else if (result == JFileChooser.ERROR_OPTION) {
                     JOptionPane.showMessageDialog(frame, "ERROR in setting", "file setter", JOptionPane.ERROR_MESSAGE);
                 }
             }

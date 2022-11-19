@@ -5,26 +5,29 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 
 public class ConfigurationReader {
 
     private static final String separator = ":";
     private final File file;
-    private final String[] names;
+    //private final String[] names;
+    private final HashSet<String> keys;
 
     /**
      * @param file the file that will be read.
      * @param file the "key" format expected.
      */
-    public ConfigurationReader(File file, String[] names) {
+    public ConfigurationReader(File file, Collection<String> names) {
         if (!file.exists() || !file.isFile()) {
             throw new IllegalArgumentException();
         }
-        this.names = Arrays.copyOf(Objects.requireNonNull(names), names.length);
+        this.keys = new LinkedHashSet<>(names);
         this.file = file;
     }
     
@@ -32,18 +35,24 @@ public class ConfigurationReader {
      * Reads informations specified.
      * @return a {@link List} of {@link String} of the informations read.
      */
-    public List<String> readInformations() {
-        List<String> result = new LinkedList<>();
+    public HashMap<String, String> readInformations() {
+        HashMap<String, String> result = new LinkedHashMap<>();
 
         try (BufferedReader r = new BufferedReader(new FileReader(file.getAbsolutePath(), StandardCharsets.UTF_8))) {
-            String line = r.readLine();
-            for(int i=0; line != null; i++) {
-                String[] lineItems = line.split(separator);
-                if ((lineItems.length != 2) || (!lineItems[0].equals(names[i]))) {
-                    throw new IllegalFileFormatException();
+            int i=0;
+            for (String line = r.readLine(); line != null; line = r.readLine()) {
+                if (!line.trim().equals("")) {
+                    String[] lineItems = line.split(separator);
+                    String key = lineItems[0].trim();
+                    if ((lineItems.length != 2) || (!keys.contains(key))) {
+                        throw new IllegalFileFormatException();
+                    }
+                    result.put(key, lineItems[1].trim());
+                    i++;
                 }
-                result.add(lineItems[1].trim());
-                line = r.readLine();
+            }
+            if (keys.size() != i) {
+                throw new IllegalFileFormatException();
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());

@@ -2,7 +2,10 @@ package it.unibo.mvc.Controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import it.unibo.mvc.Model.Configuration;
@@ -16,18 +19,25 @@ import it.unibo.mvc.View.PrintStreamView;
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
+
+    private static final String min = "minimum";
+    private static final String max = "maximum";
+    private static final String attempts = "attempts";
+
     private static final int MIN;
     private static final int MAX;
     private static final int ATTEMPTS;
 
     static {
-        ConfigurationReader reader = new ConfigurationReader(new File(ClassLoader.getSystemResource("config.yml").getPath()), new String[] {
-            "minimum", "maximum", "attempts"
-        });
-        List<String> list = reader.readInformations();
-        MIN = Integer.parseInt(list.get(0));
-        MAX = Integer.parseInt(list.get(1));
-        ATTEMPTS = Integer.parseInt(list.get(2));
+        List<String> list = new ArrayList<>();
+        list.add(min);
+        list.add(max);
+        list.add(attempts);
+        ConfigurationReader reader = new ConfigurationReader(new File(ClassLoader.getSystemResource("config.yml").getPath()), list);
+        HashMap<String, String> map = reader.readInformations();
+        MIN = Integer.parseInt(map.get(min));
+        MAX = Integer.parseInt(map.get(max));
+        ATTEMPTS = Integer.parseInt(map.get(min));
     }
 
     private final DrawNumber model;

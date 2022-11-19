@@ -1,4 +1,4 @@
-package it.unibo.mvc;
+package it.unibo.mvc.Model;
 
 
 /**
@@ -41,7 +41,7 @@ public final class Configuration {
      * @return true if the configuration is consistent
      */
     public boolean isConsistent() {
-        return attempts > 0 && min < max;
+        return (attempts > 0) && (min < max);
     }
 
     /**

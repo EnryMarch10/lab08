@@ -1,15 +1,34 @@
-package it.unibo.mvc;
+package it.unibo.mvc.Controller;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
+import it.unibo.mvc.Model.Configuration;
+import it.unibo.mvc.Model.DrawNumber;
+import it.unibo.mvc.Model.DrawNumberImpl;
+import it.unibo.mvc.Model.DrawResult;
+import it.unibo.mvc.View.DrawNumberView;
+import it.unibo.mvc.View.DrawNumberViewImpl;
+import it.unibo.mvc.View.PrintStreamView;
+
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
-    private static final int MIN = 0;
-    private static final int MAX = 100;
-    private static final int ATTEMPTS = 10;
+    private static final int MIN;
+    private static final int MAX;
+    private static final int ATTEMPTS;
+
+    static {
+        ConfigurationReader reader = new ConfigurationReader(new File(ClassLoader.getSystemResource("config.yml").getPath()), new String[] {
+            "minimum", "maximum", "attempts"
+        });
+        List<String> list = reader.readInformations();
+        MIN = Integer.parseInt(list.get(0));
+        MAX = Integer.parseInt(list.get(1));
+        ATTEMPTS = Integer.parseInt(list.get(2));
+    }
 
     private final DrawNumber model;
     private final List<DrawNumberView> views;
@@ -27,7 +46,7 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
             view.setObserver(this);
             view.start();
         }
-        this.model = new DrawNumberImpl(MIN, MAX, ATTEMPTS);
+        this.model = new DrawNumberImpl(new Configuration.Builder().setMin(MIN).setMax(MAX).setAttempts(ATTEMPTS).build());
     }
 
     @Override
@@ -66,7 +85,11 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
      * @throws FileNotFoundException 
      */
     public static void main(final String... args) throws FileNotFoundException {
-        new DrawNumberApp(new DrawNumberViewImpl());
+        new DrawNumberApp(
+            new DrawNumberViewImpl(),
+            new DrawNumberViewImpl(),
+            new PrintStreamView(System.out)
+        );
     }
 
 }

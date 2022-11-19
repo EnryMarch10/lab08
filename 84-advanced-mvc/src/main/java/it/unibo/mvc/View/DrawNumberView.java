@@ -1,4 +1,7 @@
-package it.unibo.mvc;
+package it.unibo.mvc.View;
+
+import it.unibo.mvc.Controller.DrawNumberViewObserver;
+import it.unibo.mvc.Model.DrawResult;
 
 /**
  *
@@ -6,7 +9,7 @@ package it.unibo.mvc;
 public interface DrawNumberView {
 
     /**
-     * @param observer the controller to attach
+     * @param observer the controller to attach.
      */
     void setObserver(DrawNumberViewObserver observer);
 
@@ -21,7 +24,12 @@ public interface DrawNumberView {
     void numberIncorrect();
 
     /**
-     * @param res the result of the last draw
+     * @param res the result of the last draw.
      */
     void result(DrawResult res);
+
+    /**
+     * @param message the error message to show.
+     */
+    void displayError(String message);
 }
